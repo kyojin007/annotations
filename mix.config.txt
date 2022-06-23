@@ -1,0 +1,15 @@
+const mix = require('laravel-mix');
+const myPlugin = require('myPlugin');
+
+mix.setPublicPath('public')
+  .extract([
+    'jquery'
+  ])
+  .webpackConfig({
+    plugins: [
+      new myPlugin({
+
+      })
+    ]
+  })
+  .version();
