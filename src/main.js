@@ -1,4 +1,5 @@
 import App from './App.svelte';
+import md5 from 'blueimp-md5';
 
 const users = [
   { 'id': 0, 'author': 'Simon', 'email': 'simon.gilhooly@atom14.co.uk' },
@@ -6,14 +7,23 @@ const users = [
   { 'id': 2, 'author': 'Contrary Mary', 'email': 'mary@email.com' }
 ];
 
+users.forEach(u => {
+  u.hash = md5(u.email);
+  u.avatar = `https://www.gravatar.com/avatar/${u.hash}?d=identicon`;
+});
+
 const annotations = [
   {
-    'annotator': users[0],
+    'author': users[0].author,
+    'email': users[0].email,
+    'avatar': users[0].avatar,
     'date': '2 days ago',
     'annotation': 'Look here!',
     'annotations': [
       {
-        'annotator': users[1],
+        'author': users[1].author,
+        'email': users[1].email,
+        'avatar': users[1].avatar,
         'date': '1 day ago',
         'annotation': 'Wow, I am doing Svelte stuff',
         'annotations': []
@@ -21,7 +31,9 @@ const annotations = [
     ]
   },
   {
-    'annotator': users[1],
+    'author': users[2].author,
+    'email': users[2].email,
+    'avatar': users[2].avatar,
     'date': '12 days ago',
     'annotation': 'My first comment!',
     'annotations': []

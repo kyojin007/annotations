@@ -3,8 +3,6 @@
   import logo from './assets/svelte.png'
   import Annotation from './lib/Annotation.svelte';
 
-  import md5 from 'blueimp-md5';
-
   export let annotations;
   export let users;
 
@@ -14,11 +12,6 @@
   let annotatorId = 0;
 
   $: annotator = users[annotatorId];
-
-  users.forEach(u => {
-    u.hash = md5(u.email);
-    u.avatar = `https://www.gravatar.com/avatar/${u.hash}?d=identicon`;
-  });
 
   console.log(users);
   console.log(annotations);
@@ -30,7 +23,14 @@
     //let author = 'Fred Bloggs'; // will need these properties in JS world
 		// let email = 'fred@bloggs.com';
 		let posted = 'just now'; // when drawing the page we can get the human friendly versions from PHP
-    let reply = {'annotator': annotator, 'date': posted, 'annotation': comment, 'annotations': []};
+		let reply = {
+			'author': annotator.author,
+			'email': annotator.email,
+			'avatar': annotator.avatar,
+			'date': posted,
+			'annotation': comment,
+			'annotations': []
+		};
 
     // annotations.unshift(reply);
     // annotations = annotations;
@@ -74,7 +74,7 @@
 
       <div class="annotations">
         {#each annotations as a}
-          <Annotation date={a.date}, annotation={a.annotation}, annotations={a.annotations}, annotator={a.annotator} />
+          <Annotation {...a} />
         {/each}
       </div>
     </div>

@@ -2,7 +2,9 @@
 	import Annotation from './Annotation.svelte';
 	import User from './User.svelte';
 
-	export let annotator;
+	export let author;
+	export let email;
+	export let avatar;
 	export let date;
   export let annotation;
   export let annotations;
@@ -33,7 +35,14 @@
 	function reply () {
 		// just need to get the current user and their email address - possibly from a store?
 		const posted = 'just now'; // when drawing the page we can get the human friendly versions from PHP
-		let reply = {'annotator': annotator, 'date': posted, 'annotation': comment, 'annotations': []};
+		let reply = {
+			'author': author,
+			'email': email,
+			'avatar': avatar,
+			'date': posted,
+			'annotation': comment,
+			'annotations': []
+		};
 
 		// annotations.push({'author': author, 'email': email, 'date': posted, 'annotation': comment, 'annotations': []});
     annotations = [...annotations, reply];
@@ -47,7 +56,7 @@
 
 <article class="annotation">
 	<div class="annotation-header mb-3">
-		<User author={annotator.author} email={annotator.email} avatar={annotator.avatar} />
+		<User author={author} email={email} avatar={avatar} />
 		<div class="meta">
 			<span>{date}</span> | <span>{annotations.length} {annotations.length === 1 ? 'reply' : 'replies'}</span>
 		</div>
@@ -64,7 +73,7 @@
 	<!-- iterate thru replies, replies to replies, etc -->
 	<div class="annotations">
     {#each annotations as anno}
-			<Annotation date={anno.date}, annotation={anno.annotation}, annotations={anno.annotations}, annotator={anno.annotator} />
+			<Annotation {...anno} />
     {/each}
   </div>
 
