@@ -1,19 +1,13 @@
 <script>
 	import Annotation from './Annotation.svelte';
-	import md5 from 'blueimp-md5';
+	import User from './User.svelte';
 
-	export let author;
-	export let email;
+	export let annotator;
 	export let date;
   export let annotation;
   export let annotations;
 
 	let comment = '';
-
-	const hash = md5(email);
-	const avatar = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
-
-	console.log(email, hash, avatar);
 
 	/* alternative approach
 	let img = document.createElement('img');
@@ -38,15 +32,13 @@
 	 */
 	function reply () {
 		// just need to get the current user and their email address - possibly from a store?
-		const author = 'Fred Bloggs';
-		const email = 'fred@bloggs.com';
 		const posted = 'just now'; // when drawing the page we can get the human friendly versions from PHP
-		let reply = {'author': author, 'email': email, 'date': posted, 'annotation': comment, 'annotations': []};
+		let reply = {'annotator': annotator, 'date': posted, 'annotation': comment, 'annotations': []};
 
 		// annotations.push({'author': author, 'email': email, 'date': posted, 'annotation': comment, 'annotations': []});
     annotations = [...annotations, reply];
 
-		console.log(annotations);
+		console.log('addReply', annotations);
 
 		// reset this to clear the textarea
 		comment = '';
@@ -55,12 +47,9 @@
 
 <article class="annotation">
 	<div class="annotation-header mb-3">
-		<img src={avatar} alt="{email}" height="32" width="32">
-		<div class="details">
-			<h5 title="{email}">{author}</h5>
-      <div class="meta">
-				<span>{date}</span> | <span>{annotations.length} {annotations.length === 1 ? 'reply' : 'replies'}</span>
-			</div>
+		<User author={annotator.author} email={annotator.email} avatar={annotator.avatar} />
+		<div class="meta">
+			<span>{date}</span> | <span>{annotations.length} {annotations.length === 1 ? 'reply' : 'replies'}</span>
 		</div>
 	</div>
 	<div class="body">
@@ -74,8 +63,8 @@
 
 	<!-- iterate thru replies, replies to replies, etc -->
 	<div class="annotations">
-    {#each annotations as annotation}
-      <Annotation {...annotation} />
+    {#each annotations as anno}
+			<Annotation date={anno.date}, annotation={anno.annotation}, annotations={anno.annotations}, annotator={anno.annotator} />
     {/each}
   </div>
 
@@ -95,19 +84,10 @@
 		display: flex;
 	}
 
-	.details {
-		flex: 1 1 auto;
-		margin-left: 0.5rem
-	}
-
 	.meta {
 		font-size: 0.8em;
 	}
 	.body {
 		margin: 1em 0 1em 2.5em;
-	}
-
-	h5 {
-		margin: 0;
 	}
 </style>
