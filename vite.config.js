@@ -5,7 +5,7 @@ const ASSET_URL = process.env.ASSET_URL || '';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  'base': `${ASSET_URL}/docs/`,
+  // 'base': `${ASSET_URL}/docs/`,
   'build': {
     'outDir': 'docs'
   },
