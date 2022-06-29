@@ -1,34 +1,26 @@
 <script>
-  import { annotations } from './lib/annotationStore.js';
+  // import { annotations } from './lib/annotationStore.js';
   import logo from './assets/svelte.png'
   import Annotation from './lib/Annotation.svelte';
 
+  export let annotations;
+
   // linked to textarea
   let comment = '';
-
-  $annotations = [
-    {
-      'author': 'Simon',
-      'email': 'simon.gilhooly@atom14.co.uk',
-      'date': '2 days ago',
-      'annotation': 'Look here!',
-      'annotations': [
-        { 'author': 'Fred Bloggs', 'email': 'fred@bloggs.com', 'date': '1 day ago', 'annotation': 'Wow, I am doing Svelte stuff', 'annotations': [] }
-      ]
-    }
-  ];
 
   /**
    *
    */
   function addComment () {
-    let author = 'Fred Bloggs';
+    let author = 'Fred Bloggs'; // will need these properties in JS world
 		let email = 'fred@bloggs.com';
 		let posted = 'just now'; // when drawing the page we can get the human friendly versions from PHP
     let reply = {'author': author, 'email': email, 'date': posted, 'annotation': comment, 'annotations': []};
 
-    // annotations = annotations;
-    annotations.update(annotations => [reply, ...annotations]);
+    annotations.unshift(reply);
+    annotations = annotations;
+
+    console.log('addComment %o', annotations);
 
     comment = '';
   }
@@ -40,13 +32,15 @@
 
   <div class="row">
     <div class="col-4">
-      <h5>Comments: {$annotations.length}</h5>
+      <h5>Comments: {annotations.length}</h5>
 
-      <textarea bind:value={comment} class="form-control" rows="3"></textarea>
-      <button on:click={addComment} class="btn btn-primary my-2">Add Comment</button>
+      <div class="d-grid">
+        <textarea bind:value={comment} class="form-control" rows="2"></textarea>
+        <button on:click={addComment} class="btn btn-primary my-2">Add Comment</button>
+      </div>
 
       <div class="annotations">
-        {#each $annotations as annotation}
+        {#each annotations as annotation}
           <Annotation {...annotation} />
         {/each}
       </div>
@@ -60,11 +54,6 @@
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 
-  main {
-    padding: 1em;
-    margin: 0 auto;
-  }
-
   img {
     height: 16rem;
     width: 16rem;
@@ -76,7 +65,7 @@
     font-size: 4rem;
     font-weight: 100;
     line-height: 1.1;
-    margin: 2rem auto;
+    margin: 1rem auto;
     max-width: 14rem;
   }
 

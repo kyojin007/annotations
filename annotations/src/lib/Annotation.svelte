@@ -10,15 +10,10 @@
 
 	let comment = '';
 
-	let hash = md5(email);
-	// see https://ui-avatars.com/
-	// const a = author.replace(' ', '+');
-	// let fallback = encodeURI(`https://ui-avatars.com/api/${a}/80/random/ffffff/2/0.5/true`);
-	// let fallback = `https://ui-avatars.com/api/${a}/80/random/ffffff/2/0.5/true`;
+	const hash = md5(email);
+	const avatar = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
 
-	//$: avatar = `https://ui-avatars.com/api/?name=${author.replace(/ /g, '+')}&rounded=true&background=ff3e00&color=fff&bold=true`;
-	// $: avatar = `https://www.gravatar.com/avatar/${hash}?d=${fallback}`;
-	$: avatar = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
+	console.log(email, hash, avatar);
 
 	/* alternative approach
 	let img = document.createElement('img');
@@ -30,6 +25,10 @@
 
 	img.onerror = function() {
 		console.error("No Gravatar for this email address");
+		// see https://ui-avatars.com/
+		const a = author.replace(' ', '+');
+		// let fallback = encodeURI(`https://ui-avatars.com/api/${a}/80/random/ffffff/2/0.5/true`);
+		let fallback = `https://ui-avatars.com/api/${a}/80/random/ffffff/2/0.5/true`;
 		img.src = fallback;
 	};
 	*/
@@ -38,14 +37,16 @@
 	 *
 	 */
 	function reply () {
-		// just need to get the current user and their email address
-		let author = 'Fred Bloggs';
-		let email = 'fred@bloggs.com';
-		let posted = 'just now'; // when drawing the page we can get the human friendly versions from PHP
+		// just need to get the current user and their email address - possibly from a store?
+		const author = 'Fred Bloggs';
+		const email = 'fred@bloggs.com';
+		const posted = 'just now'; // when drawing the page we can get the human friendly versions from PHP
 		let reply = {'author': author, 'email': email, 'date': posted, 'annotation': comment, 'annotations': []};
 
-		annotations.push({'author': author, 'email': email, 'date': posted, 'annotation': comment, 'annotations': []});
-    annotations = annotations;
+		// annotations.push({'author': author, 'email': email, 'date': posted, 'annotation': comment, 'annotations': []});
+    annotations = [...annotations, reply];
+
+		console.log(annotations);
 
 		// reset this to clear the textarea
 		comment = '';
@@ -54,9 +55,9 @@
 
 <article class="annotation">
 	<div class="annotation-header mb-3">
-		<img src={avatar} alt="" height="32" width="32">
+		<img src={avatar} alt="{email}" height="32" width="32">
 		<div class="details">
-			<h5>{author}</h5>
+			<h5 title="{email}">{author}</h5>
       <div class="meta">
 				<span>{date}</span> | <span>{annotations.length} {annotations.length === 1 ? 'reply' : 'replies'}</span>
 			</div>
@@ -66,16 +67,12 @@
     {annotation}
 	</div>
 
-	<div class="row row-cols-lg-auto g-3 align-items-center">
-		<div class="col-12">
-			<textarea bind:value={comment} class="form-control mb-3"></textarea>
-		</div>
-
-		<div class="col-12">
-  		<button on:click={reply} class="btn btn-primary">Reply</button>
-		</div>
+	<div class="reply d-grid mb-3">
+		<textarea bind:value={comment} class="form-control mb-1" placeholder="type your reply here ..."	rows="1"></textarea>
+		<button on:click={reply} class="btn btn-sm btn-primary">Reply</button>
 	</div>
 
+	<!-- iterate thru replies, replies to replies, etc -->
 	<div class="annotations">
     {#each annotations as annotation}
       <Annotation {...annotation} />
@@ -89,8 +86,8 @@
 		background-color: #fff;
 		border-left: 4px #ccc solid;
 		/* border-radius: 4px; */
-		padding: 1rem;
-		margin: 1em 0;
+		padding: 0 0 0 1rem;
+		margin: 1em 0em 1em 1.5em;
 	}
 
 	.annotation-header {
@@ -107,7 +104,7 @@
 		font-size: 0.8em;
 	}
 	.body {
-		margin: 2em;
+		margin: 1em 0 1em 2.5em;
 	}
 
 	h5 {
